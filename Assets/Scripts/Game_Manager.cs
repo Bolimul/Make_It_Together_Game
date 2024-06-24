@@ -15,7 +15,7 @@ public class Game_Manager : MonoBehaviour
     private void Start()
     {
         makeLevel = GameObject.Find("ExerciseCanva").GetComponent<MakeLevel>();
-        message.enabled = false;
+        message.GetComponent<TextMeshProUGUI>().enabled = false;
         slider.value = 0;
     }
     public void CheckCondition()
@@ -72,14 +72,26 @@ public class Game_Manager : MonoBehaviour
                 if (eventData.pointerDrag != null)
                     eventData.pointerDrag.transform.SetParent(GameObject.Find("LeftGrid").transform, true);
             }
-        }
-        else if (GameObject.Find("Ftask") != null && GameObject.Find("Ftask").activeInHierarchy == true)
-        {
-            if(eventData.pointerDrag != null)
+            else if (makeLevel.GetLevelName() == "FTask")
             {
-                slider.value += eventData.pointerDrag.GetComponent<Drag>().value;
+                if (eventData.pointerDrag != null && itemSlot != null)
+                {
+                    Debug.Log(eventData.pointerDrag.ToString());
+                    Instantiate(eventData.pointerDrag, GameObject.Find("GridForCoins").transform);
+                    slider.value += eventData.pointerDrag.GetComponent<Drag>().value;
+                }
             }
         }
+/*        else if (GameObject.Find("Ftask") != null && GameObject.Find("Ftask").activeInHierarchy == true)
+        {
+            if(eventData.pointerDrag != null && itemSlot != null)
+            {
+                Debug.Log(eventData.pointerDrag.ToString());
+                Instantiate(eventData.pointerDrag, GameObject.Find("GridForCoins").transform);
+                slider.value += eventData.pointerDrag.GetComponent<Drag>().value;
+                eventData.pointerDrag.transform.SetParent(GameObject.Find("Ftask").transform, true);
+            }
+        }*/
             CheckCondition();
     }
 

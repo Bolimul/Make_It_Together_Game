@@ -6,14 +6,17 @@ using TMPro;
 
 public class MakeLevel : MonoBehaviour
 {
-    private string[] levelNames = new string[6] {"2TaskCM", "1TaskCM" , "3TaskCM" , "5TaskCM" ,"CTask","ETask"};
+    private string[] levelNames = new string[7] {"2TaskCM", "1TaskCM" , "3TaskCM" , "5TaskCM" ,"CTask","ETask", "FTask"};
     public List<List<GameObject>> dragItems = new() { };
     public List<List<GameObject>> itemSlots = new() { };
+    public List<List<GameObject>> items = new() { };
     public GridLayoutGroup leftGrid;
     public GridLayoutGroup rightGrid;
+    public HorizontalLayoutGroup horLayGroup;
     private Slider slider;
     public int rightsum;
     private int index = 0;
+    private int index2 = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,8 +32,20 @@ public class MakeLevel : MonoBehaviour
         itemSlots.Add(new List<GameObject>() { Resources.Load<GameObject>("Prefabs/bisli") });
         dragItems.Add(new List<GameObject>() { Resources.Load<GameObject>("Prefabs/task2") });
         itemSlots.Add(new List<GameObject>() { Resources.Load<GameObject>("Prefabs/bisli") });
+        dragItems.Add(new List<GameObject>() { Resources.Load<GameObject>("Prefabs/1nisDrag"), Resources.Load<GameObject>("Prefabs/2nisDrag"), Resources.Load<GameObject>("Prefabs/5nisDrag") });
+        items.Add(new List<GameObject>() { Resources.Load<GameObject>("Prefabs/10nisImage"), Resources.Load<GameObject>("Prefabs/bisliImage") });
         slider = GameObject.Find("progressBar").GetComponent<Slider>();
-        MakeNewLevel(levelNames[index%6]);
+        if (string.Equals(levelNames[index % levelNames.Length], "FTask") == true)
+        {
+            GameObject.Find("Task2").GetComponent<Canvas>().sortingOrder = 2;
+            GameObject.Find("Task1").GetComponent<Canvas>().sortingOrder = 1;
+        }
+        else
+        {
+            GameObject.Find("Task2").GetComponent<Canvas>().sortingOrder = 1;
+            GameObject.Find("Task1").GetComponent<Canvas>().sortingOrder = 2;
+        }
+        MakeNewLevel(levelNames[index%levelNames.Length]);
     }
 
     // Update is called once per frame
@@ -95,11 +110,20 @@ public class MakeLevel : MonoBehaviour
             slider.maxValue = 1;
             rightsum = 0;
         }
+        else if (string.Equals(levelName, "FTask") == true)
+        {
+            for (int i = 0; i < dragItems[index % levelNames.Length].Count; i++)
+                Instantiate(dragItems[index%levelNames.Length][i], horLayGroup.transform);
+            Instantiate(items[index2 % levelNames.Length][0], GameObject.Find("price").transform);
+            Instantiate(items[index2 % levelNames.Length][1], GameObject.Find("product").transform);
+            slider.maxValue = 6;
+        }
+        
     }
 
     public string GetLevelName()
     {
-        return levelNames[index%6];
+        return levelNames[index%levelNames.Length];
     }
 
     public void MoveToNextLevel()
@@ -114,7 +138,17 @@ public class MakeLevel : MonoBehaviour
         }
         slider.value = 0;
         GameObject.Find("VictMessage").GetComponent<TextMeshProUGUI>().enabled = false;
+        if(string.Equals(levelNames[index+1 % levelNames.Length], "FTask") == true)
+        {
+            GameObject.Find("Task2").GetComponent<Canvas>().sortingOrder = 2;
+            GameObject.Find("Task1").GetComponent<Canvas>().sortingOrder = 1;
+        }
+        else
+        {
+            GameObject.Find("Task2").GetComponent<Canvas>().sortingOrder = 1;
+            GameObject.Find("Task1").GetComponent<Canvas>().sortingOrder = 2;
+        }
         index++;
-        MakeNewLevel(levelNames[index % 6]);
+        MakeNewLevel(levelNames[index % levelNames.Length]);
     }
 }

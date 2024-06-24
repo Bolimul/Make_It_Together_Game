@@ -15,10 +15,20 @@ public class Drag : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndD
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     public Vector2 pos;
-    private void Awake()
+    private void Start()
     {
-        canvas = GameObject.Find("ExerciseCanva");
-        initialParent = GameObject.Find("LeftGrid");
+        
+        string levelName = GameObject.Find("ExerciseCanva").GetComponent<MakeLevel>().GetLevelName();
+        if (levelName != "FTask")
+        {
+            canvas = GameObject.Find("Task1");
+            initialParent = GameObject.Find("LeftGrid");
+        }
+        else
+        {
+            canvas = GameObject.Find("Task2");
+            initialParent = GameObject.Find("CoinsLayout");
+        }
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         pos = rectTransform.anchoredPosition;
@@ -33,7 +43,7 @@ public class Drag : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndD
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(canvas.GetComponent<MakeLevel>().GetLevelName() != "1TaskCM")
+        if(GameObject.Find("ExerciseCanva").GetComponent<MakeLevel>().GetLevelName() != "1TaskCM")
         {
             Debug.Log("OnDrag");
             rectTransform.anchoredPosition += eventData.delta / canvas.GetComponent<Canvas>().scaleFactor;
@@ -44,8 +54,7 @@ public class Drag : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndD
     {
         Debug.Log("OnEndDrag");
         canvasGroup.blocksRaycasts = true;
-        StartCoroutine(Delay(0.5f));
-        eventData.pointerDrag.transform.SetParent(GameObject.Find("LeftGrid").transform, true);
+        eventData.pointerDrag.transform.SetParent(initialParent.transform, true);
 
     }
 
@@ -53,11 +62,6 @@ public class Drag : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndD
     {
         Debug.Log("OnPointerDown");
         GameObject.Find("GameManager").GetComponent<Game_Manager>().GameManagerCheck(eventData, null);
-    }
-
-    private IEnumerator Delay(float sec)
-    {
-        yield return new WaitForSeconds(sec);
     }
 
     public void SetSwitcher(bool sw)

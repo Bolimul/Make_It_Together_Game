@@ -9,13 +9,19 @@ public class ItemSlot : MonoBehaviour, IDropHandler
 {
     [SerializeField] private Slider slider;
     public int value;
-    
 
+    private void Start()
+    {
+        Debug.Log("ItemSlot");
+    }
 
     public void OnDrop(PointerEventData eventData)
     {
+        Debug.Log("OnDrop");
         GameObject.Find("GameManager").GetComponent<Game_Manager>().GameManagerCheck(eventData, this);
     }
+
+
 
 
 
